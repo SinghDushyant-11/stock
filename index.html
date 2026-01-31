@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Stock Terminal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>AI Stock Terminal</h1>
+                </div>
+                <div class="header-controls">
+                    <select id="stockSelector" class="form-control stock-selector">
+                        <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                        <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                        <option value="INFY.NS">Infosys Limited</option>
+                    </select>
+                    <button id="gameModeBtn" class="btn btn--primary game-mode-btn">🎮 Game Mode</button>
+                    <button id="themeToggle" class="btn btn--secondary theme-toggle">🌙 Dark</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="main-dashboard" id="mainDashboard">
+            <div class="dashboard-layout">
+                <!-- Left Panel - Stock Details -->
+                <aside class="left-panel">
+                    <div class="stock-details-card">
+                        <div class="stock-header">
+                            <h2 id="stockName">Reliance Industries Ltd</h2>
+                            <span id="stockTicker" class="stock-ticker">RELIANCE.NS</span>
+                        </div>
+                        
+                        <div class="price-section">
+                            <div class="current-price">
+                                <span class="price-label">Live Price</span>
+                                <div class="price-value" id="currentPrice">₹1,471.50</div>
+                                <div class="price-change positive" id="priceChange">
+                                    <span class="change-value">+5.2 (+0.38%)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-prediction">
+                                <span class="prediction-label">AI Predicted Price</span>
+                                <div class="prediction-value" id="aiPrediction">₹1,452.43</div>
+                            </div>
+                        </div>
+
+                        <div class="ai-metrics">
+                            <div class="metric-row">
+                                <span class="metric-label">AI Confidence</span>
+                                <div class="confidence-container">
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" id="confidenceFill" style="width: 75%"></div>
+                                    </div>
+                                    <span class="confidence-text" id="confidenceText">75%</span>
+                                </div>
+                            </div>
+
+                            <div class="metric-row">
+                                <span class="metric-label">Direction</span>
+                                <div class="direction-indicator" id="directionIndicator">
+                                    <span class="direction-icon">📈</span>
+                                    <span class="direction-text">BULLISH</span>
+                                </div>
+                            </div>
+
+                            <div class="metric-row">
+                                <span class="metric-label">Conviction</span>
+                                <span class="conviction-badge medium" id="convictionBadge">Medium</span>
+                            </div>
+
+                            <div class="metric-row">
+                                <span class="metric-label">Target Change</span>
+                                <span class="target-change positive" id="targetChange">+3.0%</span>
+                            </div>
+                        </div>
+
+                        <div class="market-metrics">
+                            <h3>Market Metrics</h3>
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <span class="metric-name">Day High</span>
+                                    <span class="metric-value" id="dayHigh">₹1,503.90</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-name">Day Low</span>
+                                    <span class="metric-value" id="dayLow">₹1,468.80</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-name">Volume</span>
+                                    <span class="metric-value" id="volume">9.88M</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-name">Market Cap</span>
+                                    <span class="metric-value" id="marketCap">₹18,64,233 Cr</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-name">P/E Ratio</span>
+                                    <span class="metric-value" id="peRatio">22.85</span>
+                                </div>
+                                <div class="metric-item">
+                                    <span class="metric-name">52W High</span>
+                                    <span class="metric-value" id="weekHigh52">₹1,500.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Center Panel - Chart -->
+                <section class="center-panel">
+                    <div class="chart-section">
+                        <div class="chart-header">
+                            <h3>Live Price Chart with AI Predictions</h3>
+                            <div class="time-selector">
+                                <button class="btn btn--sm time-btn active" data-range="1D">1D</button>
+                                <button class="btn btn--sm time-btn" data-range="5D">5D</button>
+                                <button class="btn btn--sm time-btn" data-range="1M">1M</button>
+                            </div>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <canvas id="priceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- News Impact Chart -->
+                    <div class="impact-chart-section">
+                        <div class="chart-header">
+                            <h3>News Impact Analysis</h3>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 200px;">
+                            <canvas id="impactChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="prediction-accuracy">
+                        <h3>AI Prediction Accuracy</h3>
+                        <div class="accuracy-grid">
+                            <div class="accuracy-item">
+                                <span class="accuracy-label">Success Rate</span>
+                                <span class="accuracy-value success">79.8%</span>
+                            </div>
+                            <div class="accuracy-item">
+                                <span class="accuracy-label">Avg Accuracy</span>
+                                <span class="accuracy-value">79.8%</span>
+                            </div>
+                            <div class="accuracy-item">
+                                <span class="accuracy-label">Total Predictions</span>
+                                <span class="accuracy-value">847</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Right Panel - Market Events & News -->
+                <aside class="right-panel">
+                    <div class="market-events" id="marketEvents">
+                        <div class="events-header">
+                            <h3>Live Market News & Events</h3>
+                            <div class="news-status">
+                                <span class="news-indicator" id="newsIndicator"></span>
+                                <span class="news-status-text" id="newsStatusText">Fetching news...</span>
+                            </div>
+                            <div class="event-filters">
+                                <button class="btn btn--sm filter-btn active" data-filter="all">All</button>
+                                <button class="btn btn--sm filter-btn" data-filter="high-impact">High Impact</button>
+                                <button class="btn btn--sm filter-btn" data-filter="earnings">Earnings</button>
+                            </div>
+                        </div>
+                        <div class="events-list" id="eventsList">
+                            <!-- Events will be populated by JavaScript -->
+                        </div>
+                        
+                        <div class="event-correlation">
+                            <h4>Event Impact Correlation</h4>
+                            <div class="correlation-stats">
+                                <div class="correlation-item">
+                                    <span class="correlation-label">Positive Events</span>
+                                    <span class="correlation-value positive">68%</span>
+                                </div>
+                                <div class="correlation-item">
+                                    <span class="correlation-label">Market Reaction</span>
+                                    <span class="correlation-value">Strong</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Game Mode Dashboard -->
+        <main class="game-dashboard hidden" id="gameDashboard">
+            <!-- Back to Dashboard Button -->
+            <div class="game-nav-bar">
+                <button class="btn btn--secondary" id="backToMain">← Dashboard</button>
+                <h1>Trading Simulator - Complete Stock Market Training</h1>
+                <div class="leaderboard-rank">
+                    Rank: <span id="userRank">#1</span>
+                </div>
+            </div>
+
+            <div class="game-layout">
+                <!-- Game Header with Enhanced Portfolio Stats -->
+                <div class="game-header">
+                    <div class="portfolio-summary">
+                        <div class="portfolio-stats-enhanced">
+                            <div class="stat-item primary">
+                                <span class="stat-icon">💰</span>
+                                <div class="stat-content">
+                                    <span class="stat-label">Portfolio Value</span>
+                                    <span class="stat-value" id="portfolioValue">₹1,00,000</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">💵</span>
+                                <div class="stat-content">
+                                    <span class="stat-label">Cash Balance</span>
+                                    <span class="stat-value" id="cashBalance">₹1,00,000</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">📊</span>
+                                <div class="stat-content">
+                                    <span class="stat-label">Today's P&L</span>
+                                    <span class="stat-value" id="totalPnL">₹0</span>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-icon">⚠️</span>
+                                <div class="stat-content">
+                                    <span class="stat-label">Risk Level</span>
+                                    <span class="risk-badge low" id="riskLevel">Low</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game Content -->
+                <div class="game-content-enhanced">
+                    <!-- Left Panel: Enhanced Trading -->
+                    <div class="left-game-panel">
+                        <!-- Trading Form -->
+                        <div class="trading-panel">
+                            <div class="trading-form">
+                                <h3>📈 Place Order</h3>
+                                <div class="form-group">
+                                    <label class="form-label">Stock</label>
+                                    <select id="gameStockSelector" class="form-control">
+                                        <option value="RELIANCE.NS">Reliance Industries Ltd</option>
+                                        <option value="TCS.NS">Tata Consultancy Services Ltd</option>
+                                        <option value="INFY.NS">Infosys Limited</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Order Type</label>
+                                    <div class="order-type-buttons">
+                                        <button class="btn btn--sm order-type-btn active" data-type="buy">📈 Buy</button>
+                                        <button class="btn btn--sm order-type-btn" data-type="sell">📉 Sell</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Quantity</label>
+                                    <input type="number" id="orderQuantity" class="form-control" min="1" value="1">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Price per Share</label>
+                                    <input type="number" id="orderPrice" class="form-control" step="0.1" value="1377.6">
+                                </div>
+                                <div class="order-summary">
+                                    <div class="summary-item">
+                                        <span>Total Value</span>
+                                        <span id="orderValue">₹1,377.6</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn--primary btn--full-width" id="placeOrderBtn">🚀 Place Order</button>
+                            </div>
+                        </div>
+
+                        <!-- Event Impact Simulator -->
+                        <div class="event-simulator">
+                            <h3>🎯 Event Impact Simulator</h3>
+                            <div class="form-group">
+                                <label class="form-label">Market Event</label>
+                                <select id="eventSelector" class="form-control">
+                                    <option value="">Select an event to simulate</option>
+                                    <option value="earnings-beat">Company beats earnings expectations</option>
+                                    <option value="earnings-miss">Company misses earnings expectations</option>
+                                    <option value="oil-price-rise">Crude oil prices surge 10%</option>
+                                    <option value="regulatory-approval">Major regulatory approval</option>
+                                    <option value="market-crash">Market correction begins</option>
+                                </select>
+                            </div>
+                            <button class="btn btn--secondary btn--full-width" id="simulateEventBtn">🎭 Simulate Event</button>
+                            <div class="event-result" id="eventResult"></div>
+                        </div>
+
+                        <!-- AI Helper Chatbot -->
+                        <div class="ai-chatbot">
+                            <h3>🤖 AI Trading Assistant</h3>
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="chat-message ai">
+                                    <div class="message-content">Hello! I'm your AI trading assistant. Ask me anything about stocks, trading strategies, or market analysis!</div>
+                                </div>
+                            </div>
+                            <div class="chat-input">
+                                <input type="text" id="chatInput" class="form-control" placeholder="Ask about trading, stocks, or market trends...">
+                                <button class="btn btn--primary" id="sendChatBtn">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Center Panel: Enhanced Charts & Analysis -->
+                    <div class="center-game-panel">
+                        <!-- Portfolio Performance Chart -->
+                        <div class="chart-section">
+                            <div class="chart-header">
+                                <h3>📊 Portfolio Performance (7 Days)</h3>
+                                <div class="performance-stats">
+                                    <span class="perf-stat">
+                                        <span class="perf-label">Today:</span>
+                                        <span class="perf-value positive" id="todayPnL">+0.00%</span>
+                                    </span>
+                                    <span class="perf-stat">
+                                        <span class="perf-label">This Week:</span>
+                                        <span class="perf-value positive" id="weekPnL">+0.00%</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="chart-container" style="position: relative; height: 280px;">
+                                <canvas id="portfolioChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Holdings with Live P/L -->
+                        <div class="holdings-section-enhanced">
+                            <h3>💼 Your Holdings</h3>
+                            <div class="holdings-list" id="holdingsList">
+                                <div class="empty-state">No holdings yet. Start trading to build your portfolio!</div>
+                            </div>
+                        </div>
+
+                        <!-- Transaction History -->
+                        <div class="transaction-history">
+                            <h3>📋 Transaction History</h3>
+                            <div class="transactions-list" id="transactionsList">
+                                <div class="empty-state">No transactions yet.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Learning & Leaderboard -->
+                    <div class="right-game-panel">
+                        <!-- Challenges & Rewards -->
+                        <div class="challenges-section-enhanced">
+                            <h3>🏆 Trading Challenges</h3>
+                            <div class="challenges-list" id="challengesList">
+                                <div class="challenge-card">
+                                    <div class="challenge-icon">🎯</div>
+                                    <div class="challenge-content">
+                                        <div class="challenge-title">Beginner Trader</div>
+                                        <div class="challenge-description">Make your first profitable trade</div>
+                                        <div class="challenge-reward">Reward: ₹500 bonus</div>
+                                        <div class="challenge-progress">
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 0%"></div>
+                                            </div>
+                                            <span class="progress-text">0/1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Leaderboard -->
+                        <div class="leaderboard-section">
+                            <h3>🏅 Session Leaderboard</h3>
+                            <div class="leaderboard-list" id="leaderboardList">
+                                <div class="leaderboard-item current-user">
+                                    <div class="rank">1</div>
+                                    <div class="player">You</div>
+                                    <div class="score">₹1,00,000</div>
+                                </div>
+                                <div class="leaderboard-item">
+                                    <div class="rank">2</div>
+                                    <div class="player">AI Trader</div>
+                                    <div class="score">₹98,500</div>
+                                </div>
+                                <div class="leaderboard-item">
+                                    <div class="rank">3</div>
+                                    <div class="player">Demo User</div>
+                                    <div class="score">₹97,200</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Glossary -->
+                        <div class="glossary-section-enhanced">
+                            <h3>📚 Trading Glossary</h3>
+                            <div class="glossary-search">
+                                <input type="text" id="glossarySearch" class="form-control" placeholder="Search terms...">
+                            </div>
+                            <div class="glossary-list" id="glossaryList">
+                                <div class="glossary-item" data-term="portfolio">
+                                    <div class="glossary-term">Portfolio</div>
+                                    <div class="glossary-definition">A collection of financial investments like stocks, bonds, and cash.</div>
+                                </div>
+                                <div class="glossary-item" data-term="pnl">
+                                    <div class="glossary-term">P&L (Profit & Loss)</div>
+                                    <div class="glossary-definition">The gain or loss from your trading activities.</div>
+                                </div>
+                                <div class="glossary-item" data-term="volatility">
+                                    <div class="glossary-term">Volatility</div>
+                                    <div class="glossary-definition">The degree of variation in a trading price series.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quiz Section -->
+                        <div class="quiz-section hidden" id="quizSection">
+                            <h3>🧠 Post-Trade Quiz</h3>
+                            <div class="quiz-content" id="quizContent">
+                                <!-- Quiz questions will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- News Detail Modal -->
+        <div class="modal hidden" id="newsModal">
+            <div class="modal-overlay" id="modalOverlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Event Details</h3>
+                    <button class="modal-close" id="closeModal" aria-label="Close modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalDescription"></p>
+                    <div class="modal-impact">
+                        <span class="impact-label">Expected Impact:</span>
+                        <span id="modalImpact" class="impact-value"></span>
+                    </div>
+                    <div class="modal-ai-analysis">
+                        <h4>AI Analysis</h4>
+                        <p id="aiAnalysis"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn--primary" id="readMoreBtn">Read Original Article</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
